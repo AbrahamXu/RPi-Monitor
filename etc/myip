@@ -1,0 +1,32 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides: myip
+# Required-Start: networking sshd
+# Required-Stop:
+# Default-Start: 2 3 4 5
+# Default-Stop:
+# Short-Description: Send wan-ip to email
+# Description: Send wan-ip to email
+### END INIT INFO
+
+M=/etc/init.d/myip
+ROOT_DIR=/home/pi/init
+
+case "$1" in
+  start)
+	echo "myip is starting ..."
+	sudo ${ROOT_DIR}/myip.sh > /home/pi/myip.log &
+	echo "myip is started successfully"
+	;;
+  stop)
+	echo "myip is stopping ..."
+	echo "myip is stopped successfully"
+	;;
+  *)
+	echo "Usage: $N {start|stop}" >&2
+	exit 1
+	;;
+
+esac
+
+exit 0

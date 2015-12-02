@@ -1,0 +1,8 @@
+cd ~/tmp
+pushd ~/Desktop/mjpeg-streamer
+
+sudo nohup ./mjpg_streamer -i "./input_uvc.so -d /dev/video0  -r 320x240 -f 10" -o "./output_file.so -f /home/pi/tmp/" &
+
+sudo killall mjpg_streamer
+
+convert *.jpg -delay 100 conv.mp4

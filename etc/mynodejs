@@ -1,0 +1,33 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides: mynodejs
+# Required-Start: networking sshd
+# Required-Stop:
+# Default-Start: 2 3 4 5
+# Default-Stop: 0 1 6
+# Short-Description: Start nodejs for remote controls
+# Description: Start nodejs for remote controls
+### END INIT INFO
+
+M=/etc/init.d/mynodejs
+APP_FILE=/home/pi/cmdServer/app.js
+
+case "$1" in
+  start)
+	echo "mynodejs is starting ..."
+	sudo nodejs $APP_FILE > /home/pi/mynodejs.log &
+	echo "mynodejs is started successfully"
+	;;
+  stop)
+	echo "mynodejs is stopping ..."
+	sudo killall nodejs
+	echo "mynodejs is stopped successfully"
+	;;
+  *)
+	echo "Usage: $N {start|stop}" >&2
+	exit 1
+	;;
+
+esac
+
+exit 0

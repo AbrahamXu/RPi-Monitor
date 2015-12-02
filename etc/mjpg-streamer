@@ -1,0 +1,98 @@
+#! /bin/sh
+
+### BEGIN INIT INFO
+# Provides:          mjpg-streamer
+# Required-Start:    $local_fs networking
+# Required-Stop:
+# Should-Start:
+# Should-Stop:
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Provide http service from mjpg-streamer
+# Description: Provide http service from mjpg-streamer,  serving as ip camera
+### END INIT INFO
+
+
+M=/etc/init.d/mjpg-streamer
+ROOT_DIR=/home/pi/Desktop/mjpg-streamer
+PIDFILE=/var/run/mjpg-streamer.pid
+
+
+MJPG_ROOT=/home/pi/Desktop/mjpg-streamer
+PIDFILE=/var/run/mjpg-streamer.pid
+
+export LD_LIBRARY_PATH=$MJPG_ROOT
+
+#./mjpg_streamer -i "./input_uvc.so -f 25" -o "./output_http.so -w ./www -p 8000"
+#EXEC='$MJPG_ROOT/mjpg_streamer -i "$MJPG_ROOT/input_uvc.so -r 640x480  -f 25" -o "$MJPG_ROOT/output_http.so -w $MJPG_ROOT/www2  -c admin:password -p 8000"'
+
+
+
+#
+# Function to verify if a pid is alive
+#
+is_alive()
+{
+	if [ -f "$PIDFILE" ]; then
+		echo "mjpg-streamer is running ..."
+		return 1
+	else
+		echo "mjpg-streamer is not running ..."
+		return 0
+	fi
+}
+
+case "$1" in
+  start)
+
+        is_alive $PIDFILE
+        RETVAL="$?"
+
+        if [ "$RETVAL" = "0" ]; then
+            echo "mjpg-streamer is starting ..."
+	    $MJPG_ROOT/mjpg_streamer -i "$MJPG_ROOT/input_uvc.so -r 640x480  -f 15" -o "$MJPG_ROOT/output_http.so -w $MJPG_ROOT/www2  -c admin:password -p 8000" &
+	    pid=$!
+            echo "$pid" | sudo tee $PIDFILE # add -a for append (>>)
+            echo "mjpg-streamer started with pid=$pid."
+        else
+            echo "mjpg-streamer already running."
+	fi
+	;;
+  stop)
+
+        is_alive $PIDFILE
+        RETVAL="$?"
+
+	echo "RETVAL=$RETVAL"
+
+        if [ "$RETVAL" = "0" ]; then
+            echo "mjpg-streamer not running."
+        else
+            echo "mjpg-streamer is stopping ..."
+	    pid=$(cat $PIDFILE)
+            echo "killing pid $pid ..."
+	    sudo kill $pid
+	    #sudo killall ${ROOT_DIR}/mjpg_streamer
+	    echo "mjpg-streamer is stopped successfully"
+	    sudo rm -f $PIDFILE
+	fi
+	;;
+  status)
+	echo "mjpg-streamer is entering 3 ..."
+
+        is_alive $PIDFILE
+        RETVAL="$?"
+
+        if [ "$RETVAL" = "0" ]; then
+            echo "mjpg-streamer not running."
+        else
+            echo "mjpg-streamer is running."
+	fi
+	;;
+  *)
+	echo "Usage: $N {start|stop|status}" >&2
+	exit 1
+	;;
+esac
+
+exit 0
