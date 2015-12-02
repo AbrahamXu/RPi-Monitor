@@ -1,0 +1,43 @@
+http://jupiter.ethz.ch/~pjt/makingmovies.html
+
+http://www.itforeveryone.co.uk/image-to-video.html
+
+http://www.pc-freak.net/blog/converting-jpeg-images-mp4-video-linux/
+
+http://robotics.usc.edu/~ampereir/wordpress/?p=702
+
+http://electron.mit.edu/~gsteele/ffmpeg/
+
+http://forum.videohelp.com/threads/331462-ffmpeg-help-convert-mp4-to-jpeg-array-and-back-to-mp4-problem!
+
+
+$ sudo apt-get install imagemagick
+$ sudo apt-get install ffmpeg
+$ sudo apt-get install mencoder
+
+
+# imagemagick + ffmpeg
+cd ~/Desktop/
+mkdir ./tmpdir
+cp img/*.JPG ./tmpdir
+mogrify -resize 800x800  tmpdir/*.JPG
+convert tmpdir/*.JPG -delay 10 -morph 10 tmpdir/%04d.jpg
+rm ./tmpdir/IMG_*
+ffmpeg -r 25 -qscale 2  -i tmpdir/%04d.jpg output.mp4
+
+
+# imagemagick + mencoder
+cd ~/Desktop/
+mkdir ./tmpdir
+cp img/*.JPG ./tmpdir
+mogrify -resize 800x800  tmpdir/*.JPG
+convert tmpdir/*.JPG -delay 10 -morph 10 tmpdir/%04d.jpg
+rm ./tmpdir/IMG_*
+mencoder "mf://tmpdir/*.jpg" -o movie.avi -ovc lavc -lavcopts vcodec=mjpeg
+
+
+# imagemagick for raw images
+cd ~/Desktop/
+mkdir ./tmpdir
+cp img/*.JPG ./tmpdir
+convert tmpdir/*.JPG -delay 10 conv.mp4
